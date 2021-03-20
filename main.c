@@ -1,58 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include "neural_network.h"
-
-float scoreNetwork(NeuralNetwork* network);
-float absNum(float f);
+#include "core/cai_core.h"
 
 int main() {
-    int layers[] = {2, 4, 16, 4, 2};
-    NeuralNetwork* currentNetwork = createNeuralNetwork(5, layers);
-    float currentScore = 10000.0;
+    CAINetwork* network = malloc(sizeof(CAINetwork));
+    int sizes[] = {1, 2, 1};
 
-    for(int i = 0; i < 2500000; i++) {
-        NeuralNetwork* newNetwork = createNeuralNetwork(5, layers);
-        float newScore = scoreNetwork(newNetwork);
+    caiInitializeNetwork(network, 3, sizes);
 
-        if(newScore < currentScore) {
-            deleteNeuralNetwork(currentNetwork);
-            currentNetwork = newNetwork;
-            currentScore = newScore;
-        } else
-            deleteNeuralNetwork(newNetwork);
-    }
+    float data[] = {6.0, 9.0};
+    caiPutLayerData(network, 1, data);
+    caiGetLayerData(network, 1, data);
 
-    for(int i = 0; i < 8; i++) {
-        float numA = (float) rand() / (float) RAND_MAX;
-        float numB = (float) rand() / (float) RAND_MAX;
-        float result[] = {numA, numB};
-        processNetworkInput(result, currentNetwork);
-        float difference = absNum((numA + numB) - result[0]);
-        printf("%f + %f -> %f (%f)\n", numA, numB, result[0], difference);
-    }
+    printf("%f\n%f\n", data[0], data[1]);
 
-    deleteNeuralNetwork(currentNetwork);
+    caiDisposeNetwok(network);
 
     return 0;
-}
-
-float scoreNetwork(NeuralNetwork* network) {
-    time_t t;
-    srand((unsigned) time(&t));
-    float totalDifference = 0;
-
-    for(int i = 0; i < 128; i++) {
-        float numA = (float) rand() / (float) RAND_MAX;
-        float numB = (float) rand() / (float) RAND_MAX;
-        float result[] = {numA, numB};
-        processNetworkInput(result, network);
-        totalDifference += absNum((numA + numB) - result[0]);
-    }
-
-    return totalDifference / 128.0;
-}
-
-float absNum(float f) {
-    return f < 0 ? -f : f;
 }

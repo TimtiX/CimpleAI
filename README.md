@@ -1,6 +1,6 @@
 **CimpleAI**
 
-This is a small project to learn a bit about C and AI. The idea is to have a command line tool that can evolve neural networks. A more detailed documentation will follow. The current main method tries to evolve a network, that adds up two numbers.
+This is a small project to learn a bit about C and AI. The idea is to have a command line tool that can evolve neural networks. A more detailed documentation will follow. The project is in early development and as I am currently graduating there will not be much activity until mid 2021.
 
 ---
 
@@ -9,6 +9,6 @@ This is a small project to learn a bit about C and AI. The idea is to have a com
 On linux:
 ```bash
 sudo apt-get install gcc
-gcc main.c neural_network.c -o out.o
+gcc main.c core/cai_core.c -o out.o
 ./out.o
 ```
