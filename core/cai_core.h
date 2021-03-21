@@ -28,6 +28,9 @@ int caiGetLayerAmount(CAINetwork* network);
 int caiGetNeuronAmount(CAINetwork* network, int layerIndex);
 int caiGetWeightAmount(CAINetwork* network, int layerIndex);
 int caiGetLayerDataSize(CAINetwork* network, int layerIndex);
+int caiGetLayerDataIndex(CAINetwork* network, int layerIndex, int neuronIndex, int weightIndex);
 int caiGetActivationFunc(CAINetwork* network);
+int caiGetInputSize(CAINetwork* network);
+int caiGetOutputSize(CAINetwork* network);
 
 #endif

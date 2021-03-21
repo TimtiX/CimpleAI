@@ -34,7 +34,7 @@ void caiDisposeNetwok(CAINetwork* network) {
 
 void caiGetLayerData(CAINetwork* network, int layerIndex, float* target) {
     if(layerIndex >= 1 && layerIndex < network->layerAmount) {
-        CAILayer* layer = network->layers[layerIndex];
+        CAILayer* layer = network->layers[layerIndex - 1];
         float* data = layer->weightData;
         int dataSize = layer->neuronAmount * layer->weightAmount;
 
@@ -45,7 +45,7 @@ void caiGetLayerData(CAINetwork* network, int layerIndex, float* target) {
 
 void caiPutLayerData(CAINetwork* network, int layerIndex, float* data) {
     if(layerIndex >= 1 && layerIndex < network->layerAmount) {
-        CAILayer* layer = network->layers[layerIndex];
+        CAILayer* layer = network->layers[layerIndex - 1];
         float* target = layer->weightData;
         int dataSize = layer->neuronAmount * layer->weightAmount;
 
@@ -55,7 +55,36 @@ void caiPutLayerData(CAINetwork* network, int layerIndex, float* data) {
 }
 
 void caiProcessInput(CAINetwork* network, float* data) {
-    printf("Unsupported operation: caiProcessInput\n");
+    float* currentData;
+    float* currentBuffer;
+
+    int inputSize = caiGetInputSize(network);
+    currentData = (float*) malloc(sizeof(float) * inputSize);
+    for(int index = 0; index < inputSize; index++)
+        currentData[index] = data[index];
+
+    for(int layerIndex = 1; layerIndex < network->layerAmount; layerIndex++) {
+        CAILayer* layer = network->layers[layerIndex - 1];
+        currentBuffer = (float*) malloc(sizeof(float) * layer->neuronAmount);
+
+        for(int neuronIndex = 0; neuronIndex < layer->neuronAmount; neuronIndex++) {
+            currentBuffer[neuronIndex] = 0.0;
+
+            for(int weightIndex = 0; weightIndex < layer->weightAmount; weightIndex++) {
+                int layerDataIndex = caiGetLayerDataIndex(network, layerIndex, neuronIndex, weightIndex);
+                currentBuffer[neuronIndex] += currentData[weightIndex] * layer->weightData[layerDataIndex];
+            }
+        }
+
+        free(currentData);
+        currentData = currentBuffer;
+    }
+
+    int outputSize = caiGetOutputSize(network);
+    for(int index = 0; index < outputSize; index++)
+        data[index] = currentData[index];
+
+    free(currentData);
 }
 
 void caiSetActivationFunc(CAINetwork* network, int activationFunc) {
@@ -70,24 +99,47 @@ int caiGetNeuronAmount(CAINetwork* network, int layerIndex) {
     if(layerIndex < 1 || layerIndex >= network->layerAmount)
         return -1;
 
-    return network->layers[layerIndex]->neuronAmount;
+    return network->layers[layerIndex - 1]->neuronAmount;
 }
 
 int caiGetWeightAmount(CAINetwork* network, int layerIndex) {
     if(layerIndex < 1 || layerIndex >= network->layerAmount)
         return -1;
 
-    return network->layers[layerIndex]->weightAmount;
+    return network->layers[layerIndex - 1]->weightAmount;
 }
 
 int caiGetLayerDataSize(CAINetwork* network, int layerIndex) {
     if(layerIndex < 1 || layerIndex >= network->layerAmount)
         return -1;
 
-    CAILayer* layer = network->layers[layerIndex];
+    CAILayer* layer = network->layers[layerIndex - 1];
     return layer->neuronAmount * layer->weightAmount;
 }
 
 int caiGetActivationFunc(CAINetwork* network) {
     return network->activationFunc;
+}
+
+int caiGetLayerDataIndex(CAINetwork* network, int layerIndex, int neuronIndex, int weightIndex) {
+    if(layerIndex < 1 || layerIndex >= network->layerAmount)
+        return -1;
+
+    CAILayer* layer = network->layers[layerIndex - 1];
+
+    if(neuronIndex < 0 || neuronIndex >= layer->neuronAmount)
+        return -1;
+
+    if(weightIndex < 0 || weightIndex >= layer->weightAmount)
+        return -1;
+
+    return neuronIndex * layer->weightAmount + weightIndex;
+}
+
+int caiGetInputSize(CAINetwork* network) {
+    return caiGetWeightAmount(network, 1);
+}
+
+int caiGetOutputSize(CAINetwork* network) {
+    return caiGetNeuronAmount(network, network->layerAmount - 1);
 }
