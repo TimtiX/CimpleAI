@@ -65,8 +65,36 @@ void caiLoadFile(CAINetwork* network, char* path) {
     free(fileContent);
 }
 
+//CAIGETWEIGHTAMOUNT zeugs muss auch für 0 funken (tuts nicht ist ja 1 limit)
 void caiSaveFile(CAINetwork* network, char* path) {
+    FILE* file = fopen(path, "w");
 
+    if(!file)
+        return;
+
+    fprintf(file, "%i", network->layers[0]->weightAmount);
+
+    for(int index = 0; index < network->layerAmount - 1; index++)
+        fprintf(file, " %i", network->layers[index]->neuronAmount);
+
+    fprintf(file, "\n");
+
+    for(int index = 1; index < network->layerAmount; index++) {
+        int dataSize = caiGetLayerDataSize(network, index);
+        float* data = (float*) malloc(sizeof(float) * dataSize);
+
+        caiGetLayerData(network, index, data);
+
+        fprintf(file, "%f", data[0]);
+
+        for(int dataIndex = 1; dataIndex < dataSize; dataIndex++)
+            fprintf(file, " %f", data[dataIndex]);
+
+        fprintf(file, "\n");
+        free(data);
+    }
+
+    fclose(file);
 }
 
 void caiRandomize(CAINetwork* network, float low, float high) {

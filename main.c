@@ -12,6 +12,7 @@ int main() {
 
     printf("%f\n", processData[0]); //Output should be 10.0
 
+    caiSaveFile(network, "test2.txt"); //Save network data to file test2.txt
     caiDisposeNetwok(network);
     return 0;
 }
