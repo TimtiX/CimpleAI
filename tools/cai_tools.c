@@ -1,5 +1,4 @@
 #include "cai_tools.h"
-#include "string_tools.h"
 
 void caiLoadFile(CAINetwork* network, char* path) {
     FILE* file = fopen(path, "r");
@@ -65,7 +64,6 @@ void caiLoadFile(CAINetwork* network, char* path) {
     free(fileContent);
 }
 
-//CAIGETWEIGHTAMOUNT zeugs muss auch für 0 funken (tuts nicht ist ja 1 limit)
 void caiSaveFile(CAINetwork* network, char* path) {
     FILE* file = fopen(path, "w");
 
@@ -79,11 +77,11 @@ void caiSaveFile(CAINetwork* network, char* path) {
 
     fprintf(file, "\n");
 
-    for(int index = 1; index < network->layerAmount; index++) {
-        int dataSize = caiGetLayerDataSize(network, index);
+    for(int layerIndex = 1; layerIndex < network->layerAmount; layerIndex++) {
+        int dataSize = caiGetLayerDataSize(network, layerIndex);
         float* data = (float*) malloc(sizeof(float) * dataSize);
 
-        caiGetLayerData(network, index, data);
+        caiGetLayerData(network, layerIndex, data);
 
         fprintf(file, "%f", data[0]);
 
@@ -98,7 +96,16 @@ void caiSaveFile(CAINetwork* network, char* path) {
 }
 
 void caiRandomize(CAINetwork* network, float low, float high) {
+    for(int layerIndex = 1; layerIndex < network->layerAmount; layerIndex++) {
+        int dataSize = caiGetLayerDataSize(network, layerIndex);
+        float* data = (float*) malloc(sizeof(float) * dataSize);
 
+        for(int dataIndex = 0; dataIndex < dataSize; dataIndex++)
+            data[dataIndex] = ((float) rand() / (float) RAND_MAX) * (high - low) + low;
+
+        caiPutLayerData(network, layerIndex, data);
+        free(data);
+    }
 }
 
 void caiMix(CAINetwork* netA, float probA, CAINetwork* netB, float probB, CAINetwork* target) {

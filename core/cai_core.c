@@ -100,7 +100,7 @@ int caiGetNeuronAmount(CAINetwork* network, int layerIndex) {
         return -1;
 
     if(layerIndex == 0)
-        return newtork->layers[0]->weightAmount;
+        return network->layers[0]->weightAmount;
 
     return network->layers[layerIndex - 1]->neuronAmount;
 }
