@@ -19,7 +19,7 @@ typedef struct CAINetworkStruct {
 } CAINetwork;
 
 void caiInitializeNetwork(CAINetwork* network, int layerAmount, int* layerSizes);
-void caiDisposeNetwok(CAINetwork* network);
+void caiDisposeNetwork(CAINetwork* network);
 void caiGetLayerData(CAINetwork* network, int layerIndex, float* target);
 void caiPutLayerData(CAINetwork* network, int layerIndex, float* data);
 void caiProcessInput(CAINetwork* network, float* data);

@@ -22,14 +22,14 @@ void caiInitializeNetwork(CAINetwork* network, int layerAmount, int* layerSizes)
     }
 }
 
-void caiDisposeNetwok(CAINetwork* network) {
+void caiDisposeNetwork(CAINetwork* network) {
     for(int layerIndex = 1; layerIndex < network->layerAmount; layerIndex++) {
         CAILayer* layer = network->layers[layerIndex - 1];
         free(layer->weightData);
         free(layer);
     }
 
-    free(network);
+    //free(network);
 }
 
 void caiGetLayerData(CAINetwork* network, int layerIndex, float* target) {
