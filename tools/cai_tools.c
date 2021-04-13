@@ -1,25 +1,15 @@
 #include "cai_tools.h"
 
 void caiLoadFile(CAINetwork* network, char* path) {
-    FILE* file = fopen(path, "r");
+    int fileSize;
+    char* fileContent = loadFileString(path, &fileSize);
 
-    if(!file)
+    if(fileSize == -1)
         return;
 
-    fseek(file, 0L, SEEK_END);
-    int fileSize = ftell(file);
-    char* fileContent = (char*) malloc(sizeof(char) * (fileSize + 1));
-    rewind(file);
-
-    for(int index = 0; index < fileSize; index++)
-        fileContent[index] = fgetc(file);
-
-    fclose(file);
-    fileContent[fileSize] = '\0';
-
     int lineAmount = splitString(fileContent, '\n');
-
     int fileContentIndex = 0;
+
     for(int lineIndex = 0; lineIndex < lineAmount; lineIndex++) {
         char* lineContent = copyString(fileContent + fileContentIndex);
 
@@ -110,4 +100,8 @@ void caiRandomize(CAINetwork* network, float low, float high) {
 
 void caiMix(CAINetwork* netA, float probA, CAINetwork* netB, float probB, CAINetwork* target) {
 
+}
+
+float* caiLoadDataFile(char* path, int* setAmount) {
+    return 0;
 }

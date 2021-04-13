@@ -9,7 +9,7 @@ This is a small project to learn a bit about C and AI. The idea is to have a com
 On linux:
 ```bash
 sudo apt-get install gcc
-gcc main.c core/cai_core.c tools/cai_tools.c tools/string_tools.c -o out.o
+gcc main.c core/cai_core.c tools/cai_tools.c tools/file_tools.c tools/string_tools.c -o out.o
 ./out.o
 ```
 
